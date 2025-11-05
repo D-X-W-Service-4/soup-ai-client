@@ -1,0 +1,7 @@
+/math_question_label
+.env
+*.lock
+*.pyc
+*.zip
+/test
+/DB

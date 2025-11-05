@@ -1,0 +1,30 @@
+# Git files
+.git/
+.gitignore
+
+# Dockerfile
+.dockerignore
+
+# Python cache
+pycache/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# IDE and editor directories
+.idea/
+.vscode/
+.venv/
+config.local.yaml
+
+
+# other files
+test/
+data/
+results/
+*.ipynb
+*.log
+*.sh
+.DS_Store
+
