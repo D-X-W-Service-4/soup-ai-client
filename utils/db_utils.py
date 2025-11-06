@@ -189,7 +189,7 @@ def get_question_by_difficulty_unit(difficulty: int, subject_unit: str):
     with engine.connect() as conn:
         # 먼저 (difficulty, subject_unit) 조건으로 랜덤 1개 시도
         query = text("""
-            SELECT q.question_id, q.text, q.question_format
+            SELECT q.question_id, q.text, q.question_format, q.topic
             FROM questions q
             JOIN subject_units su ON q.subject_unit_id = su.subject_unit_id
             WHERE q.difficulty = :difficulty
@@ -206,7 +206,7 @@ def get_question_by_difficulty_unit(difficulty: int, subject_unit: str):
         if not result:
             print(f"[INFO] '{subject_unit}' 단원에서 해당 난이도 문제 없음 → 다른 난이도로 대체합니다.")
             fallback_query = text("""
-                SELECT q.question_id, q.text, q.question_format
+                SELECT q.question_id, q.text, q.question_format, q.topic
                 FROM questions q
                 JOIN subject_units su ON q.subject_unit_id = su.subject_unit_id
                 WHERE su.name = :subject_unit

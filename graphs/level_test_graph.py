@@ -61,6 +61,7 @@ async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
         questions = get_question_by_difficulty_unit(difficulty=row["difficulty"],
                                         subject_unit=row["subject_unit"]
                                         )
+        row["topic"] = questions.get("topic", "")
         row["question_id"] = questions.get("question_id", "")
         row["question_text"] = questions.get("text", "")
         row["question_format"] = questions.get("question_format", "")
@@ -72,6 +73,7 @@ async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
             {"question_id": int "실제 db의 PK값",
                 "question_number": int, #1~10
                 "question_text": str, 
+                "topic": str,
                 "time": float, # 임의 부여한 값
                 "difficulty": str, 
                 "question_format": str "객or선"},
@@ -79,6 +81,7 @@ async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
             {"question_id": int "실제 db의 PK값", 
                 "question_number": int, #1~10
                 "question_text": str, 
+                "topic": str,
                 "time": float, # 임의 부여한 값
                 "difficulty": str, 
                 "question_format": str "객or선"},
