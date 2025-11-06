@@ -1,6 +1,4 @@
 from typing import Dict, Optional
-# from graphs.states import RecentQuizInfo
-#: Optional[RecentQuizInfo]
 
 '''
     "recent_quiz_info": {

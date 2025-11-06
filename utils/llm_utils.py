@@ -3,12 +3,12 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from typing import Dict, Any
 import json
-
+import re
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
-def ask_llm(prompt: str) -> str:
+async def ask_llm(prompt: str) -> str:
     """system 없이 단일 user 프롬프트로 호출."""
-    resp = llm.invoke([HumanMessage(content=prompt)])
+    resp = await llm.ainvoke([HumanMessage(content=prompt)])
     return resp.content.strip()
 
 def ensure_json(s: str) -> Dict[str, Any]:
@@ -24,3 +24,8 @@ def ensure_json(s: str) -> Dict[str, Any]:
 
 def safe(val, default="없음"):
     return default if val is None else val
+
+
+def normalize_text(name: str) -> str:
+    name = re.sub(r"\(.*?\)", "", name)
+    return name.strip()

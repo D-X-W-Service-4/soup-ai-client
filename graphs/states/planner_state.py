@@ -2,7 +2,7 @@ from typing import List, Dict, Optional, Literal, TypedDict, Any
 
 
 # Quiz item (각 문항 정보)
-class QuizItem(TypedDict):
+class LevelTestItem(TypedDict):
     question_num: int
     essay_type_score: Optional[float]
     difficulty_level: Optional[str]
@@ -11,9 +11,9 @@ class QuizItem(TypedDict):
     # ----------
 
 # 최근 퀴즈 정보
-class RecentQuizInfo(TypedDict):
+class RecentLevelTestInfo(TypedDict):
     quiz_id: str
-    quizes: List[QuizItem]
+    quizes: List[LevelTestItem]
     total_score: int
     previous_quiz_score: Optional[int]        # 이전 퀴즈 점수
     score_trend: Optional[str]                # "상승/하락/유지" 등
@@ -48,7 +48,7 @@ class PlannerState(TypedDict):
     grade: Optional[int | str]   # 1,2,3 or "1","2","3"
     available_time_min: Optional[int]     # 하루 공부 가능 시간(분)
     initial_level: Optional[Literal["A","B","C","D","E","F"]] # 문제집에 따른 level
-    recent_quiz_info: Optional[RecentQuizInfo]
+    recent_quiz_info: Optional[RecentLevelTestInfo]
     recent_planner: Optional[RecentPlanner]
     recent_score: Optional[str]           # 최근 학기 성적(등급/점수 등 문자열)
     current_unit: Optional[str]           # 현재 학습 중인 단원

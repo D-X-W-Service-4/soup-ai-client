@@ -3,7 +3,7 @@ from utils import safe, ask_llm, get_avg_quiz_score, extract_accuracy_by_topic, 
 from .prompts import student_check_prompt
 
 
-def node_student_check(state: PlannerState) -> PlannerState:
+async def node_student_check(state: PlannerState) -> PlannerState:
     """학생 수준 간단 진단 텍스트 생성."""
     avg_score = get_avg_quiz_score(state.get("recent_quiz_info"))
     prompt = student_check_prompt.format(
@@ -14,6 +14,6 @@ def node_student_check(state: PlannerState) -> PlannerState:
         accuracy_by_topic=safe(extract_accuracy_by_topic(state.get("recent_quiz_info"))),
         accuracy_by_difficulty=safe(extract_accuracy_by_difficulty(state.get("recent_quiz_info")))
     )
-    out = ask_llm(prompt)
+    out = await ask_llm(prompt)
     print("student_check_result", out)
     return {**state, "student_check_result": out}

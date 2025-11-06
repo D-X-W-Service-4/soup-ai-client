@@ -179,3 +179,44 @@ def get_recent_planner(student_id: int) -> Union[List, Dict[str, Any]]:
         "content": contents,
         "content_total_min": sum(c["time"] for c in contents)
     }
+
+
+
+from sqlalchemy import text
+import random
+
+def get_question_by_difficulty_unit(difficulty: int, subject_unit: str):
+    with engine.connect() as conn:
+        # 먼저 (difficulty, subject_unit) 조건으로 랜덤 1개 시도
+        query = text("""
+            SELECT q.question_id, q.text, q.question_format
+            FROM questions q
+            JOIN subject_units su ON q.subject_unit_id = su.subject_unit_id
+            WHERE q.difficulty = :difficulty
+            AND su.name = :subject_unit
+            ORDER BY RAND()
+            LIMIT 1
+        """)
+        result = conn.execute(query, {
+            "difficulty": difficulty,
+            "subject_unit": subject_unit
+        }).fetchone()
+
+        # 없으면 subject_unit 내에서 랜덤 1개로 fallback
+        if not result:
+            print(f"[INFO] '{subject_unit}' 단원에서 해당 난이도 문제 없음 → 다른 난이도로 대체합니다.")
+            fallback_query = text("""
+                SELECT q.question_id, q.text, q.question_format
+                FROM questions q
+                JOIN subject_units su ON q.subject_unit_id = su.subject_unit_id
+                WHERE su.name = :subject_unit
+                ORDER BY RAND()
+                LIMIT 1
+            """)
+            result = conn.execute(fallback_query, {"subject_unit": subject_unit}).fetchone()
+
+        if not result:
+            print(f"[WARN] '{subject_unit}' 단원 문제 자체가 존재하지 않습니다.")
+            return None
+
+        return dict(result._mapping)
