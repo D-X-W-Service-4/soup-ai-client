@@ -22,10 +22,11 @@ async def call_exaone_async(
     timeout_s: int = 30,
 ) -> str:
     """Vast 서버의 /exaone/generate를 호출 (세마포어로 동시성 제어)"""
-    url = _u(base, "/exaone/generate")
+    url = _u(base, "chat/completions")
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     payload = {
-        "prompt": prompt,
+        "model": "LGAI-EXAONE/EXAONE-3.5-2.4B-Instruct",
+        "messages": [{"role": "user", "content": prompt}],
         "max_new_tokens": max_new_tokens,
         "temperature": temperature,
         "do_sample": do_sample,
@@ -45,4 +46,5 @@ async def call_exaone_async(
         raise HTTPException(status_code=resp.status_code, detail=f"[{resp.status_code}] POST {url} -> {resp.text}")
 
     data = resp.json()
-    return (data.get("text") or "").strip()
+    return data["choices"][0]["message"]["content"]
+    #return (data.get("text") or "").strip()

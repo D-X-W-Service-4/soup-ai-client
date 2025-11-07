@@ -320,8 +320,9 @@ async def grade_score(req: GradeRequest) -> GradeResponse:
         settings.REMOTE_BASE, settings.REMOTE_API_KEY, final_prompt,
         max_new_tokens=220, temperature=0.0, timeout_s=settings.REMOTE_TIMEOUT_S
     )
-    raw_fixed = "{" + raw + "\n</JSON>"
-    data = extract_json_from_text_strict(raw_fixed)
+    #raw_fixed = "{" + raw + "\n</JSON>"
+    #data = extract_json_from_text_strict(raw_fixed)
+    data = extract_json_from_text_strict(raw)
 
     if data is None:
         retry = f"""아래 태그 안에 JSON만 작성하라. 키는 예시와 동일해야 한다.
