@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 from api.v1.endpoints import planner, quiz, ocr, grade
-#from api.v1.endpoints import ocr, grade, grade_original
 
 api_router = APIRouter()
 

@@ -4,7 +4,7 @@ from typing import Optional, Dict, Any
 from pydantic import BaseModel, Field
 
 class Settings(BaseModel):
-    REMOTE_BASE: str = Field(default=os.getenv("REMOTE_BASE", "http://85.218.235.6:32016/v1"))
+    REMOTE_BASE: str = Field(default=os.getenv("REMOTE_BASE", "http://193.69.10.2:27185/v1"))
     REMOTE_API_KEY: str = Field(default=os.getenv("REMOTE_API_KEY", "conference_service_ai"))
     REMOTE_TIMEOUT_S: int = Field(default=int(os.getenv("REMOTE_TIMEOUT_S", "120")))
 

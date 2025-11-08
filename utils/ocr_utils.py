@@ -1,8 +1,12 @@
 import io
 import base64
-import requests
+import os, requests
 from PIL import Image
 from fastapi import UploadFile, HTTPException
+
+REMOTE_BASE = os.getenv("REMOTE_BASE", "http://193.69.10.2:26973")
+REMOTE_API_KEY = os.getenv("REMOTE_API_KEY", "Soup")
+REMOTE_TIMEOUT_S = int(os.getenv("REMOTE_TIMEOUT_S", "120"))
 
 def imagefile_to_b64_png(img_file: UploadFile) -> str:
     """
@@ -25,21 +29,22 @@ def imagefile_to_b64_png(img_file: UploadFile) -> str:
     b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
     return f"data:image/png;base64,{b64}"
 
-def call_kanana_generate(remote_base: str, api_key: str, payload: dict, timeout_s: int = 120) -> dict:
+def call_kanana_generate(payload: dict) -> dict:
     """
-    Vast.ai 서버의 /kanana/generate API로 요청을 전송하고 결과(JSON)를 반환.
+    Kanana API로 요청을 전송하고 JSON 결과 반환
+    payload: {"image_url": ..., "image_b64": ...}
     """
-    url = f"{remote_base}/kanana/generate"
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
     try:
-        r = requests.post(url, json=payload, headers=headers, timeout=timeout_s)
-        if r.status_code != 200:
-            raise HTTPException(status_code=r.status_code, detail=r.text)
-        return r.json()
+        resp = requests.post(
+            f"{REMOTE_BASE}/kanana/generate",
+            json=payload,
+            headers={"Authorization": f"Bearer {REMOTE_API_KEY}", "Content-Type": "application/json"},
+            timeout=REMOTE_TIMEOUT_S
+        )
+        if resp.status_code != 200:
+            raise HTTPException(status_code=resp.status_code, detail=resp.text)
+        return resp.json()
     except requests.exceptions.Timeout:
-        raise HTTPException(status_code=504, detail="원격 Kanana 서버 응답 시간 초과")
+        raise HTTPException(status_code=504, detail="Kanana 서버 응답 시간 초과")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"중계 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"Kanana 호출 실패: {e}")
