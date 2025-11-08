@@ -45,40 +45,39 @@ def _compute_accuracy_by(items, key):
     }
 
 def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
-    # 최근 quiz_id 조회
-    quiz_id_query = text("""
-        SELECT question_set_id
-        FROM question_sets
+    # 최근 quiz_id 두개 조회
+    level_test_query = text("""
+        SELECT level_test_id
+        FROM level_tests
         WHERE user_id = :uid
-        ORDER BY finished_at DESC
+        ORDER BY created_at DESC
         LIMIT 2
     """)
 
     with engine.connect() as conn:
-        quiz_rows = conn.execute(quiz_id_query, {"uid": student_id}).fetchall()
+        level_test_row = conn.execute(level_test_query, {"uid": student_id}).fetchall()
 
-        if not quiz_rows:
-            # 최근 퀴즈 본 거 없음
+        if not level_test_row:
+            # 해당 유저의 레벨테스트 기록 없음
             return {}
 
-        quiz_id = quiz_rows[0]._mapping["question_set_id"]
-        prev_quiz_id = quiz_rows[1]._mapping["question_set_id"] if len(quiz_rows) > 1 else None
-
+        level_test_id = level_test_row[0]._mapping["level_test_id"]
+        prev_level_test_id = level_test_row[1]._mapping["question_set_id"] if len(level_test_row) > 1 else None
         item_query = text("""
             SELECT 
                 qsi.is_correct,
                 qsi.timeout,
                 qsi.essay_type_score,
-                q.difficulty_level,
-                q.subject_unit_id,
-                q.question_type
-            FROM question_set_items qsi
+                q.difficulty_level,  ## 이건 해당 question_id에 있음
+                q.subject_unit_id,  ## 이것도 해당 question_id에 있음
+                q.question_type ## 이것도
+            FROM level_test_questions qsi
             JOIN questions q ON qsi.question_id = q.question_id
-            WHERE qsi.question_set_id = :qid
+            WHERE qsi.level_test_id = :qid
         """)
-        rows = conn.execute(item_query, {"qid": quiz_id}).fetchall()
-        if prev_quiz_id: #이전 퀴즈
-            prev_rows = conn.execute(item_query, {"qid": prev_quiz_id}).fetchall()
+        rows = conn.execute(item_query, {"qid": level_test_id}).fetchall()
+        if prev_level_test_id: #이전 퀴즈
+            prev_rows = conn.execute(item_query, {"qid": prev_level_test_id}).fetchall()
         else:
             prev_rows = []
 
@@ -113,7 +112,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
     )
     accuracy_by_topic = _compute_accuracy_by(
         [{**r._mapping, "is_correct": bool(r._mapping["is_correct"])} for r in rows],
-        "topic"
+        "question_type"
     )
     accuracy_by_difficulty = _compute_accuracy_by(
         [{**r._mapping, "is_correct": bool(r._mapping["is_correct"])} for r in rows],
@@ -132,7 +131,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         time_efficiency = None
 
     return {
-        "quiz_id": str(quiz_id),
+        "quiz_id": str(level_test_id),
         "quizes": quiz_items,
         "total_score": sum(1 for q in quiz_items if q["is_correct"]) * 10,
         "previous_quiz_score": prev_score,

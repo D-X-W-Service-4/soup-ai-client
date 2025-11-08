@@ -27,4 +27,4 @@ results/
 *.log
 *.sh
 .DS_Store
-
+*.pem

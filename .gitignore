@@ -3,5 +3,6 @@
 *.lock
 *.pyc
 *.zip
+*.pem
 /test
 /DB
