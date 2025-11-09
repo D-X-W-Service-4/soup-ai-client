@@ -5,7 +5,7 @@ from graphs import evaluate_level_test_graph, generate_level_test
 from schema import GenerateLevelTestRequest, EvaluateEssayLevelTestRequest, create_eval_quiz_input_payload
 router = APIRouter()
 
-# http://127.0.0.1:8000/level-test/generate
+# http://127.0.0.1:8000/v1/level-test/generate
 @router.post("/generate", status_code=200)
 async def get_level_test(request: GenerateLevelTestRequest):
     '''create new level test'''
@@ -14,7 +14,7 @@ async def get_level_test(request: GenerateLevelTestRequest):
     return {"level_test": result}
 
 
-# http://127.0.0.1:8000/level-test/evaluate
+# http://127.0.0.1:8000/v1/level-test/evaluate
 @router.post("/evaluate", status_code=200) #
 async def evaluator(request: EvaluateEssayLevelTestRequest):
     ''' evaluate 서술형 문제 단위만'''

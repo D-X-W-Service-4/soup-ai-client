@@ -42,7 +42,6 @@ def generate_planner_graph():
 
     graph.add_node("data_check", node_data_check)
     graph.add_node("student_check", node_student_check)
-    # graph.add_node("branch", node_branch)
     graph.add_node("recent_quiz_analyze", node_recent_quiz_analyze)
     graph.add_node("recent_planner_analyze", node_recent_planner_analyze)
     graph.add_node("generate_planner", node_generate_planner)
@@ -50,8 +49,7 @@ def generate_planner_graph():
     # Flow
     graph.add_edge(START, "data_check")
     graph.add_edge("data_check", "student_check")
-    # graph.add_edge("student_check", "branch")
-    # Routing logic
+
     graph.add_conditional_edges(
         "student_check",
         node_branch,   # 조건 함수

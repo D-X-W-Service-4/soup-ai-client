@@ -11,7 +11,7 @@ class GeneratePlannerRequest(BaseModel):
 class GenerateLevelTestRequest(BaseModel):
     soup_level: str
     workbooks: str # 문제집들이 ,로 연결된 str
-    unit_list: List # ex ["소인수분해 - 소인수분해"] list of subject_units "name"
+    unit_list: dict # ex ["소인수분해 - 소인수분해"] list of subject_units "name"
     # unit_checked_rate: Dict # ex. {"소인수분해 - 소인수분해": "해당 subject_unit_id에 포함된 모든 planner의 row에 있는 모든 checked의 합/개수"}
      # 일단 이건 보류
 
