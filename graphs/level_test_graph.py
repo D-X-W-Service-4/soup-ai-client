@@ -1,7 +1,7 @@
-from typing import List, Dict, Literal, Union, Optional
+import re
 from langgraph.graph import START, END, StateGraph
 from graphs.states.level_test_state import EvaluateLevelTestState
-from graphs.nodes.prompts import generate_level_test_prompt
+from graphs.nodes.prompts import generate_level_test_prompt, simple_eval_prompt
 from utils import ask_llm, normalize_text, ensure_json, get_question_by_difficulty_unit
 from graphs.nodes import (
     node_image_ocr,
@@ -35,10 +35,30 @@ def evaluate_level_test_graph():
     graph.add_edge("calculate_check", "evaluate_essay_question")
 
     graph.add_edge("evaluate_essay_question", END)
-    
+
     return graph.compile()
 
-### 
+
+
+async def eval_simple_level_test(question_text, user_answer, answer): 
+    prompt = simple_eval_prompt.format(
+        question_text=question_text,
+        user_answer=user_answer,
+        answer=answer, 
+    )
+    out = await ask_llm(prompt)
+    out_clean = re.sub(r"[^A-Za-z]", "", out)
+    out_clean = out_clean.lower()
+
+    return {
+        "eval_result": {
+            "is_correct": out_clean == "true",
+            "essay_type_score": None,
+            "essay_type_score_text": None,
+            "user_answer": user_answer
+        }
+    }
+
 async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
     # unit_id_list = unit_list.keys()
     unit_list = list(unit_list.values())

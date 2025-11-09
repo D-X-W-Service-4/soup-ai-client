@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Literal, Union, Dict
+from typing import List
 
 
 class GeneratePlannerRequest(BaseModel):
@@ -17,16 +17,17 @@ class GenerateLevelTestRequest(BaseModel):
 
 # --------------
 
-class EvaluateEssayLevelTestRequest(BaseModel):
-    grade: str
-    num_questions: int
-    user_answer_image: str
-    text: str
-    unit_number: str
-    unit_name: str
-    answer: Optional[str]
-    answer_text: Optional[str]
-    topic: Optional[str]
+class EvaluateLevelTestRequest(BaseModel):
+    level_test_result: List
+    # grade: str
+    # num_questions: int
+    # user_answer_image: str
+    # text: str
+    # unit_number: str
+    # unit_name: str
+    # answer: Optional[str]
+    # answer_text: Optional[str]
+    # topic: Optional[str]
 
 # class GradeResponse(BaseModel):
 #     result: Dict[str, Any]

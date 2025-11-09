@@ -15,4 +15,4 @@ class EvaluateLevelTestState(TypedDict):
     student_check_result: Optional[str]
     answer_check_result: Optional[str]
     step234_result: Optional[str]
-    final_eval_resuslt: Optional[dict]
+    final_eval_result: Optional[dict]
