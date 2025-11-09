@@ -18,10 +18,19 @@ async def get_level_test(request: GenerateLevelTestRequest):
 @router.post("/evaluate", status_code=200) #
 async def evaluator(request: EvaluateEssayLevelTestRequest):
     ''' evaluate 서술형 문제 단위만'''
-    quizs = request.quizzes
-    graph_input = create_eval_quiz_input_payload(quizs)
-    main_graph = evaluate_level_test_graph()
-    response = await main_graph.ainvoke(input=graph_input)
-    evaluate_result = response.get("result")
 
-    return evaluate_result
+    graph_input = create_eval_quiz_input_payload(
+        num_questions=request.num_questions, 
+        user_answer_image=request.user_answer_image,
+        question_text=request.text,
+        answer=request.answer,
+        answer_text=request.answer_text,
+        topic=request.topic
+    )
+    
+
+    graph = evaluate_level_test_graph()
+    response = await graph.ainvoke(input=graph_input)
+    evaluate_result = response.get("evaluate_essay_question")
+
+    return {"evaluate_result": evaluate_result}

@@ -16,13 +16,17 @@ class GenerateLevelTestRequest(BaseModel):
      # 일단 이건 보류
 
 # --------------
-     
+
 class EvaluateEssayLevelTestRequest(BaseModel):
-    problem_text: str
-    student_ocr: str
-    answer_key: str
-    rubric: Optional[str] = None
-    max_score: int = 5
+    grade: str
+    num_questions: str
+    user_answer_image: str
+    text: str
+    unit_number: int | str
+    unit_name: str
+    answer: Optional[str]
+    answer_text: Optional[str]
+    topic: Optional[str]
 
 # class GradeResponse(BaseModel):
 #     result: Dict[str, Any]

@@ -18,38 +18,36 @@ def create_planner_input_payload(student_id: str, date: str):
         "related_units": related_units
     }
 
+'''
+class EvaluateLevelTestState(TypedDict):
+    image_url: Optional[str]
+    question_text: Optional[str]
+    answer_text: Optional[str]
+    question_topic: Optional[str]
+    max_score: Optional[int]
 
-def create_eval_quiz_input_payload(request):
-    pass
-# grade
-# num_questions
-# user_answer_image
-# text
-# unit_number
-# unit_name
-# answer
-# answer_text
-# topic
-#     all_quizzes = request.quizzes
-#     for quiz in all_quizzes:
-#         question = quiz["question"]
-#         answer = quiz["answer"]
-#         user_answer = quiz["user_answer"]
-        
+    # 각 node 결과 저장
+    student_ocr: Optional[str]
+    student_check_result: Optional[str]
+    answer_check_result: Optional[str]
+    step234_result: Optional[str]
+    final_eval_resuslt: Optional[dict]
+'''
 
-#         quiz_payload = {
-#             "question": ["query"],
-#             "answer": ["predicted_documents"],
-#             "user_answer": cleanseddata["ground_truth_documents"], # List[List of text]
-#             "ans_by_level": "",
-
-#         }
-#     final_payload = {
-#         "retrieve_metrics": config["retrieve_metrics"],
-#         "dataset": {
-#             "Retrieval": retrieval_dataset,
-#         },
-#             "evaluation_mode": config["evaluation_mode"],
-#     }
-
-#     return final_payload
+def create_eval_quiz_input_payload(
+          num_questions, 
+          user_answer_image, 
+          question_text, 
+          answer,
+          answer_text,
+          topic):
+    
+    max_score = 100 // num_questions
+    return {
+        "image_url": user_answer_image,
+        "question_text": question_text,
+        "answer_text": answer_text,
+        "answer": answer,
+        "question_topic": topic,
+        "max_score": max_score,
+    }

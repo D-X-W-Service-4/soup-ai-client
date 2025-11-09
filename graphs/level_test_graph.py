@@ -3,6 +3,14 @@ from langgraph.graph import START, END, StateGraph
 from graphs.states.level_test_state import EvaluateLevelTestState
 from graphs.nodes.prompts import generate_level_test_prompt
 from utils import ask_llm, normalize_text, ensure_json, get_question_by_difficulty_unit
+from graphs.nodes import (
+    node_image_ocr,
+    node_answer_check,
+    node_calculate_check,
+    node_step234,
+    node_evaluate_essay_question
+)
+
 
 def evaluate_level_test_graph():
     graph = StateGraph(EvaluateLevelTestState)
@@ -11,8 +19,26 @@ def evaluate_level_test_graph():
     2. 가져온 결과를 병렬로 계산/대입/수치,  논리(F2)·적합성(F3)·결과 작성 여부(F4), 정답 비교 전용 동시 진행
     3. final evaluate 실행
     '''
+    graph.add_node("image_ocr", node_image_ocr)
+    graph.add_node("answer_check", node_answer_check)
+    graph.add_node("step234", node_step234)
+    graph.add_node("calculate_check", node_calculate_check)
+    graph.add_node("evaluate_essay_question", node_evaluate_essay_question)
 
+    graph.add_edge(START, "image_ocr")
+    graph.add_edge("image_ocr", "answer_check")
+    graph.add_edge("image_ocr", "step234")
+    graph.add_edge("image_ocr", "calculate_check")
 
+    graph.add_edge("answer_check", "evaluate_essay_question")
+    graph.add_edge("step234", "evaluate_essay_question")
+    graph.add_edge("calculate_check", "evaluate_essay_question")
+
+    graph.add_edge("evaluate_essay_question", END)
+    
+    return graph.compile()
+
+### 
 async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
     # unit_id_list = unit_list.keys()
     unit_list = list(unit_list.values())

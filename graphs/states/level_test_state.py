@@ -6,6 +6,7 @@ class EvaluateLevelTestState(TypedDict):
     image_url: Optional[str]
     question_text: Optional[str]
     answer_text: Optional[str]
+    answer: Optional[str]
     question_topic: Optional[str]
     max_score: Optional[int]
 
