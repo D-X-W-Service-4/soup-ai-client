@@ -6,6 +6,11 @@ from utils import ask_llm, normalize_text, ensure_json, get_question_by_difficul
 
 def evaluate_level_test_graph():
     graph = StateGraph(EvaluateLevelTestState)
+    '''
+    1. input으로 image url을 받아서, b64코드로 변환 후, ocr 텍스트를 가져온다.
+    2. 가져온 결과를 병렬로 계산/대입/수치,  논리(F2)·적합성(F3)·결과 작성 여부(F4), 정답 비교 전용 동시 진행
+    3. final evaluate 실행
+    '''
 
 
 async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
