@@ -81,7 +81,7 @@ example_state: PlannerState = {
     "grade": "1",
     "available_time_min": 90,   # 시간(시간 단위). 없으면 None 가능
     "initial_level": "B",
-    "recent_score": "중상",
+    "recent_score": 60,
     "recent_quiz_info": {
         "quiz_id": "12",
         "quizes": [
@@ -96,7 +96,6 @@ example_state: PlannerState = {
         "content_total_min": 90
     },
     # 분석/생성에 필요한 추가 입력
-    "recent_grade": "B",
     "current_unit": "소인수분해 - 소인수분해",
     "related_units": ["자연수-(7) 소인수분해", "자연수-(9) 약수와 배수 응용"],
 }

@@ -5,7 +5,6 @@ from .prompts import recent_level_test_analyze_prompt
 
 async def node_recent_quiz_analyze(state: PlannerState) -> PlannerState:
     """최근 퀴즈 분석 텍스트 생성."""
-
     prompt = recent_level_test_analyze_prompt.format(
         quiz_score=safe(state.get("recent_quiz_info", {}).get("total_score")),
         previous_quiz_score=safe(state.get("previous_quiz_score")),  # 있으면 사용

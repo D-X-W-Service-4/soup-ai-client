@@ -3,7 +3,7 @@ from utils import get_user_info, get_recent_quiz_info, get_recent_planner
 
 def create_planner_input_payload(student_id: str, date: str):
     '''create planner about per day.'''
-    user_info = get_user_info(student_id)
+    user_info, related_units = get_user_info(student_id) # grade, study_hours, soup
     quiz_info = get_recent_quiz_info(student_id) # quiz_id, quizes, total_score
     planner = get_recent_planner(student_id)
 
@@ -12,7 +12,10 @@ def create_planner_input_payload(student_id: str, date: str):
         "available_time_min": user_info["study_hours"]*60, # convert to minutes
         "initial_level": user_info["soup"],
         "recent_quiz_info": quiz_info,
-        "recent_planner": planner
+        "recent_planner": planner,
+        "recent_score":quiz_info["total_score"],
+        "current_unit":user_info["current_unit"],
+        "related_units": related_units
     }
 
 

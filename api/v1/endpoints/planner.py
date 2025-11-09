@@ -13,7 +13,7 @@ async def evaluator(request: GeneratePlannerRequest):
     print("generate new planner")
     graph_input = create_planner_input_payload(student_id=request.student_id, date=request.date)
     graph = generate_planner_graph()
-    print(graph_input)
+    # print(graph_input)
     response = await graph.ainvoke(input=graph_input)
     planner = response.get("generated_planner")
     

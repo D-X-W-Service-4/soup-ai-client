@@ -13,7 +13,7 @@ engine = create_engine(DB_URL, pool_pre_ping=True)
 def get_user_info(student_id: int) -> Dict[str, Any]:
     """users 테이블에서 학년, 레벨, 학습시간 등 가져오기"""
     query = text("""
-        SELECT grade, study_hours, soup
+        SELECT grade, study_hours, soup, last_subject_unit_id
         FROM users
         WHERE user_id = :uid
     """)
@@ -21,14 +21,55 @@ def get_user_info(student_id: int) -> Dict[str, Any]:
         res = conn.execute(query, {"uid": student_id}).fetchone()
     if not res:
         raise HTTPException(status_code=404, detail=f"User {student_id} not found.")
-    return dict(res._mapping)
+    soup_score_map = {
+        "CORN": "1",
+        "MUSHROOM": "2",
+        "PUMPKIN": "3",
+        "SWEET_POTATO": "4",
+        "TOMATO": "5"
+    }
+    grade_map = {"M1":"중학교 1학년", "M2": "중학교 3학년", "M3": "중학교 3학년"}
+    result = dict(res._mapping)
+    result["grade"] = grade_map(result["grade"])
+    result["soup"] = soup_score_map(result["soup"])
+    query = text("""
+        SELECT name
+        FROM subject_units
+        WHERE subject_unit_id = :unit_id
+    """)
+    
+    # 현재 단원
+    with engine.connect() as conn:
+        res = conn.execute(query, {"unit_id": result["last_subject_unit_id"]}).fetchone()
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Name for {result["last_subject_unit_id"]} not found.")
+    
+    result["current_unit"] = dict(res._mapping)["name"]
+    
+    # 관련 단원 
+    query = text("""
+        SELECT name
+        FROM subject_units
+        WHERE subject_unit_id BETWEEN :start_id AND :end_id
+        ORDER BY subject_unit_id
+    """)
 
-    # previous_quiz_score: Optional[int]        # 이전 퀴즈 점수
-    # score_trend: Optional[str]                # "상승/하락/유지" 등
-    # accuracy_by_unit: Optional[Dict[str, float]]      # 단원별 정답률
-    # accuracy_by_topic: Optional[Dict[str, float]]     # 유형별 정답률
-    # accuracy_by_difficulty: Optional[Dict[str, float]]# 난이도별 정답률
-    # time_efficiency: Literal["상승",
+    unit_id = result["last_subject_unit_id"]
+
+    with engine.connect() as conn:
+        rows = conn.execute(
+            query,
+            {"start_id": unit_id - 1, "end_id": unit_id + 3}
+        ).fetchall()
+
+    if not rows:
+        raise HTTPException(status_code=404, detail=f"No nearby units found for id {unit_id}")
+
+    related_units = [r._mapping["name"] for r in rows]
+
+    return result, related_units
+
+
 
 def _compute_accuracy_by(items, key):
     counts = defaultdict(lambda: {"correct": 0, "total": 0})
@@ -65,19 +106,19 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         prev_level_test_id = level_test_row[1]._mapping["question_set_id"] if len(level_test_row) > 1 else None
         item_query = text("""
             SELECT 
-                qsi.is_correct,
-                qsi.timeout,
-                qsi.essay_type_score,
-                q.difficulty_level,  ## 이건 해당 question_id에 있음
+                lti.is_correct,
+                lti.timeout,
+                lti.essay_type_score,
+                q.difficulty_level,
                 q.subject_unit_id,  ## 이것도 해당 question_id에 있음
                 q.question_type ## 이것도
-            FROM level_test_questions qsi
-            JOIN questions q ON qsi.question_id = q.question_id
-            WHERE qsi.level_test_id = :qid
+            FROM level_test_questions lti
+            JOIN questions q ON lti.question_id = q.question_id
+            WHERE lti.level_test_id = :level_test_id
         """)
-        rows = conn.execute(item_query, {"qid": level_test_id}).fetchall()
+        rows = conn.execute(item_query, {"level_test_id": level_test_id}).fetchall()
         if prev_level_test_id: #이전 퀴즈
-            prev_rows = conn.execute(item_query, {"qid": prev_level_test_id}).fetchall()
+            prev_rows = conn.execute(item_query, {"level_test_id": prev_level_test_id}).fetchall()
         else:
             prev_rows = []
 
@@ -110,14 +151,49 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         [{**r._mapping, "is_correct": bool(r._mapping["is_correct"])} for r in rows],
         "subject_unit_id"
     )
+
+    # subject_unit_id → name 매핑 조회
+    unit_name_query = text("""
+        SELECT subject_unit_id, name
+        FROM subject_units
+        WHERE subject_unit_id IN :ids
+    """)
+
+    unit_ids = tuple(accuracy_by_unit.keys())
+
+    with engine.connect() as conn:
+        unit_name_rows = conn.execute(unit_name_query, {"ids": unit_ids}).fetchall()
+
+    unit_name_map = {
+        r._mapping["subject_unit_id"]: r._mapping["name"]
+        for r in unit_name_rows
+    }
+
+    accuracy_by_unit = {
+        unit_name_map.get(k, f"단원_{k}"): v
+        for k, v in accuracy_by_unit.items()
+    }
+
     accuracy_by_topic = _compute_accuracy_by(
         [{**r._mapping, "is_correct": bool(r._mapping["is_correct"])} for r in rows],
         "question_type"
     )
-    accuracy_by_difficulty = _compute_accuracy_by(
+    accuracy_by_difficulty_raw = _compute_accuracy_by(
         [{**r._mapping, "is_correct": bool(r._mapping["is_correct"])} for r in rows],
         "difficulty_level"
     )
+    difficulty_map = {1: "상", 2: "중", 3: "하"}
+    accuracy_by_difficulty = {}
+
+    for k, v in accuracy_by_difficulty_raw.items():
+        try:
+            k_int = int(k)
+        except (ValueError, TypeError):
+            k_int = k
+        accuracy_by_difficulty[difficulty_map.get(k_int, str(k))] = v
+
+    for row in quiz_items:
+        row["difficulty_level"] = difficulty_map(int(row['difficulty_level']))
     timeout_rate = sum(1 for q in quiz_items if q["timeout"]) / len(quiz_items)
     if prev_rows:
         prev_timeout_rate = sum(1 for r in prev_rows if r._mapping["timeout"]) / len(prev_rows)
@@ -149,37 +225,51 @@ def _get_korean_day(weekday_idx: int) -> str:
 
 
 
+def get_recent_planner(student_id: int) -> Dict[str, Any]:
+    """해당 학생의 가장 최근 플래너 1개와 그에 속한 모든 planner_items 조회"""
 
-def get_recent_planner(student_id: int) -> Union[List, Dict[str, Any]]:
-    """planners + planner_items에서 가장 최근 플래너 최대 3개 조회"""
-    query = text("""
-        SELECT p.planner_id, p.date, pi.content, pi.duration
-        FROM planners p
-        JOIN planner_items pi ON p.planner_id = pi.planner_id
-        WHERE p.user_id = :uid
-        ORDER BY p.date DESC
-        LIMIT 3
+    # 1. 가장 최근 planner_id 1개 조회
+    recent_planner_query = text("""
+        SELECT planner_id, date
+        FROM planners
+        WHERE user_id = :uid
+        ORDER BY date DESC
+        LIMIT 1
     """)
+
     with engine.connect() as conn:
-        rows = conn.execute(query, {"uid": student_id}).fetchall()
+        planner_row = conn.execute(recent_planner_query, {"uid": student_id}).fetchone()
+        if not planner_row:
+            return {"message": "최근 플래너 없음"}
 
-    if not rows:
-        return ["없음"] 
+        planner_id = planner_row._mapping["planner_id"]
+        planner_date = planner_row._mapping["date"]
 
-    first = rows[0]._mapping
-    contents = [{"text": r._mapping["content"], "time": r._mapping["duration"] or 0} for r in rows]
+        # 2. 해당 planner_id의 planner_items 전부 조회
+        item_query = text("""
+            SELECT content, duration
+            FROM planner_items
+            WHERE planner_id = :pid
+        """)
+        item_rows = conn.execute(item_query, {"pid": planner_id}).fetchall()
 
+    # 아이템이 없을 수도 있음
+    contents = [
+        {"text": r._mapping["content"], "time": r._mapping["duration"] or 0}
+        for r in item_rows
+    ]
+
+    total_time = sum(c["time"] for c in contents)
     return {
+        "planner_id": planner_id,
         "meta": {
-            "date": str(first["date"].date()),
-            "day_of_week": _get_korean_day(first["date"].weekday()),
-            "planned_time_min": sum(c["time"] for c in contents)
+            "date": str(planner_date.date()),
+            "day_of_week": _get_korean_day(planner_date.weekday()),
+            "planned_time_min": total_time,
         },
         "content": contents,
-        "content_total_min": sum(c["time"] for c in contents)
+        "content_total_min": total_time,
     }
-
-
 
 from sqlalchemy import text
 import random

@@ -1,5 +1,5 @@
 from schema.payload_schema import *
-from schema.create_payload import *
+from schema._create_payload import *
 __any__ = [
     'GeneratePlannerRequest',
     'GenerateLevelTestRequest',

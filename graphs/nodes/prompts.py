@@ -43,11 +43,11 @@ recent_level_test_analyze_prompt = '''
 [입력]  
 - 테스트 성적: {quiz_score}  
 - 직전 테스트 성적: {previous_quiz_score}  
-- 성적 변화: {score_trend}   # 예: 상승, 하락, 유지  
-- 단원별 정답률: {accuracy_by_unit}   # 예: {"소인수분해": 80, "최대공약수": 60, "최소공배수": 55}
-- 문제 유형별 정답률: {accuracy_by_topic}   # 예: {"이해": 70, "문제해결": 45, "계산": 60, "추론": 40}  
+- 성적 변화: {score_trend}
+- 단원별 정답률: {accuracy_by_unit} 
+- 문제 유형별 정답률: {accuracy_by_topic} 
 - 난이도별 정답률: {accuracy_by_difficulty}  
-- 시간 효율: {time_efficiency}   # 예: "일부 문항에서 제한 시간을 초과함", "모든 문항에서 제한 시간 내 해결함"
+- 시간 효율: {time_efficiency} 
 
 ---
 
@@ -160,7 +160,7 @@ generate_planner_prompt='''
 - 하루 공부 가능 시간(분): {available_time_min}  
 - 학습 수준: {learning_level}
 - 현재 학습 중인 단원: {current_unit}  # 예: "소인수분해 - 최대공약수와 최소공배수"
-- 현재 학습 중인 단원 주변 단원들: {related_units}   # 예: ["소인수분해 - 소인수분해", "소인수분해 - 최대공약수와 최소공배수", "정수와 유리수 - 정수와 유리수의 덧셈과 뺄셈"]
+- 현재 학습 중인 단원 주변 단원들: {related_units} 
 - 이전 플래너 달성 상태: {recent_planner_analyze_result}  
 
 ---
@@ -249,7 +249,10 @@ generate_level_test_prompt = """
       {{"difficulty": 1, "subject_unit": "정수와 유리수 - 정수와 유리수의 곱셈과 나눗셈"}},
       ...
    ],
-   "metadata": {"difficulty_ratio": {"1":3, "2":5, "3":2}, "type_ratio": {"이해":3,"계산":3,"문제해결":2,"추론":2}}
+   "metadata": 
+      {{"difficulty_ratio": {{"1":3, "2":5, "3":2}}, 
+        "type_ratio": {{"이해":3,"계산":3,"문제해결":2,"추론":2}}
+      }}
 }}
 """
 
