@@ -11,24 +11,17 @@ load_dotenv()
 KANANA_PORT=os.getenv("KANANA_PORT")
 VASTAI_HOST=os.getenv("VASTAI_HOST")
 KANANA_API_KEY = os.getenv("KANANA_API_KEY", "Soup")
-BUCKET_NAME = os.getenv("BUCKET_NAME")
-S3_DIR= os.getenv("S3_DIR")
 
-def imagefile_to_b64_png(img_filename: str) -> str:
+def imagefile_to_b64_png(img_url: str) -> str:
     """
     업로드된 이미지를 PNG로 변환 후 base64 인코딩합니다.
     Kanana API에 전달 가능한 형태: data:image/png;base64,<...>
     """
-    # s3 = boto3.client("s3")
-
-    # s3_key = f"{S3_DIR}/{img_filename}"
-
-    # # S3에서 이미지 가져오기
-    # response = s3.get_object(Bucket=BUCKET_NAME, Key=s3_key)
-    # data = response['Body'].read()
     
-    with open(img_filename, "rb") as f:
-        data = f.read()  # bytes
+    resp = requests.get(img_url)
+    resp.raise_for_status()  
+
+    data = resp.content
     image = Image.open(io.BytesIO(data)).convert("RGB")
 
     # 과도한 해상도 방지 (긴 변 2048px 권장)
