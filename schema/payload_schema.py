@@ -19,10 +19,10 @@ class GenerateLevelTestRequest(BaseModel):
 
 class EvaluateEssayLevelTestRequest(BaseModel):
     grade: str
-    num_questions: str
+    num_questions: int
     user_answer_image: str
     text: str
-    unit_number: int | str
+    unit_number: str
     unit_name: str
     answer: Optional[str]
     answer_text: Optional[str]
