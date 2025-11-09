@@ -315,7 +315,7 @@ step234_prompt="""
 
 [출력 규칙]
 - 아래 세 태그 옆에만 결과를 작성하고, 그 외에는 아무것도 쓰지 마라.
-- 각 태그는 간결히 한두 줄로 작성하라.
+- 결과는 간결히 한 줄로 작성하라.
 
 [LOGIC]:
 [FIT]:
@@ -396,7 +396,7 @@ evaluate_essay_question_prompt = """
 - completeness는 step234의 REQVAL에 정합적으로:
   - '요구한 값 작성 여부: 일부 누락/작성 안 함' → completeness = 0
 - relevance는 step234의 FIT에 정합적으로:
-  - '판단: 문제 의도와 다름' → relevance = 0, 최종 score ≤ {4 if {max_score} >= 5 else {max_score}-1}
+  - '판단: 문제 의도와 다름' → relevance = 0
 - validity(계산/논리)는 step1(계산 오류)와 step234(LOGIC)에 정합적으로:
   - step1에 명백한 계산/대입 오류 → 최종 score ≤ 2
   - step234에서 논리 비약이 있으면 → 최종 score ≤ 3

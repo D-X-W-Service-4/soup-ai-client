@@ -12,6 +12,7 @@ async def node_image_ocr(state: EvaluateLevelTestState) -> EvaluateLevelTestStat
         }
 
         data = await call_kanana_generate(payload)
+        print("ocr reslult: ", data)
         if data:
             return {**state,
                     "student_ocr": data.get("text", "풀이 없음")

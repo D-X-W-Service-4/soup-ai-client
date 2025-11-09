@@ -41,17 +41,28 @@ async def ask_exaone(prompt: str) -> str:
     return resp.choices[0].message.content.strip()
 
 
-def ensure_json(s: str) -> Dict[str, Any]:
-    """LLM 결과가 JSON 문자열이어야 하는 노드에서 파싱."""
+def ensure_json(s: str, default: Dict[str, Any] = None) -> Dict[str, Any]:
+    """LLM 결과가 JSON 문자열이어야 하는 노드에서 안전하게 파싱."""
+    if default is None:
+        default = {}
+
+    if not s or not s.strip():
+        print("Warning: LLM 출력이 비어있음")
+        return default
+
     s = s.strip()
-    # 코드블록 제거 방지용 최소 처리
+    # 코드블록 제거 처리
     if s.startswith("```"):
         s = s.strip("`")
-        # ```json ... ``` 케이스
         if s.lower().startswith("json"):
             s = s[4:].strip()
-    return json.loads(s)
 
+    try:
+        return json.loads(s)
+    except json.JSONDecodeError:
+        print("Warning: LLM 출력 JSON 변환 실패, 원본 출력:", s)
+        return default
+    
 
 def safe(val, default="없음"):
     return default if val is None else val

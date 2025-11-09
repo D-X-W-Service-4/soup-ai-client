@@ -1,6 +1,6 @@
 from graphs.states import EvaluateLevelTestState
 from utils import safe, ask_llm, ensure_json
-from .prompts import step234_prompt
+from .prompts import evaluate_essay_question_prompt
 
 
 async def node_evaluate_essay_question(state: EvaluateLevelTestState) -> EvaluateLevelTestState:
@@ -14,7 +14,7 @@ async def node_evaluate_essay_question(state: EvaluateLevelTestState) -> Evaluat
     answer_check_result=safe(state.get("answer_check_result"))
     max_score=safe(state.get("max_score"))
     
-    prompt = step234_prompt.format(
+    prompt = evaluate_essay_question_prompt.format(
         question_text=question_text,
         student_ocr=student_ocr,
         answer_text=answer_text,
@@ -25,6 +25,7 @@ async def node_evaluate_essay_question(state: EvaluateLevelTestState) -> Evaluat
         max_score=max_score
     )
     out = await ask_llm(prompt)
+    print("final out: ", out)
     out = ensure_json(out)
     score = out.get("score", 0)
     criteria = out.get("criteria", {})

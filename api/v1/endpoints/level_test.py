@@ -31,6 +31,6 @@ async def evaluator(request: EvaluateEssayLevelTestRequest):
 
     graph = evaluate_level_test_graph()
     response = await graph.ainvoke(input=graph_input)
-    evaluate_result = response.get("evaluate_essay_question")
+    evaluate_result = response.get("final_eval_resuslt")
 
     return {"evaluate_result": evaluate_result}
