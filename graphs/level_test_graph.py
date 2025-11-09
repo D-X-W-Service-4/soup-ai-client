@@ -52,12 +52,12 @@ async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
         # unit_checked_rate= )
     out = await ask_llm(prompt)
     out = ensure_json(out)
-    
+    print("out", out)
     time_map = {"1": 8, "2": 4, "3":2}
     
     for i, row in enumerate(out["level_test"]):
         row["question_num"] = i+1
-        row["time"] = time_map[str(row["difficulty_level"])]
+        row["time"] = time_map[str(row["difficulty"])]
         questions = get_question_by_difficulty_unit(difficulty=row["difficulty"],
                                         subject_unit=row["subject_unit"]
                                         )
