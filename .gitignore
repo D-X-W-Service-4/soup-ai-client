@@ -1,8 +1,8 @@
 /math_question_label
-.env
 *.lock
 *.pyc
 *.zip
 *.pem
 /test
 /DB
+.env
