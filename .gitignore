@@ -2,6 +2,9 @@
 *.lock
 *.pyc
 *.zip
+*.png
+*.jpg
+*.jpeg
 *.pem
 /test
 /DB
