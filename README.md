@@ -1,4 +1,4 @@
-# SOUP AI-Powered Learning Backend
+# SOUP AI-Powered Core
 
 ## Overview
 
