@@ -1,5 +1,4 @@
 import io
-import boto3
 import httpx
 import base64
 import os, requests
