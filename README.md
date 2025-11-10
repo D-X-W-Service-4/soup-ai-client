@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains the backend server for the SOUP AI-powered learning platform. It provides services for generating and evaluating student level tests, as well as creating personalized study planners. The application is built with FastAPI and leverages graph-based workflows for complex logic.
+This repository contains the ai core for the SOUP AI-powered learning platform. It provides services for generating and evaluating student level tests, as well as creating personalized study planners. The application is built with FastAPI and leverages graph-based workflows for complex logic.
 
 ## Features
 
@@ -12,11 +12,11 @@ This repository contains the backend server for the SOUP AI-powered learning pla
 
 ## API Endpoints
 
-The API is versioned and all endpoints are available under the `/api/v1` prefix.
+The API is versioned and all endpoints are available under the `/v1` prefix.
 
 ### Level Test
 
-- **POST** `/api/v1/level-test/generate`
+- **POST** `/v1/level-test/generate`
   - **Description**: Generates a new level test for a student.
   - **Request Body**:
     ```json
@@ -33,7 +33,7 @@ The API is versioned and all endpoints are available under the `/api/v1` prefix.
     }
     ```
 
-- **POST** `/api/v1/level-test/evaluate`
+- **POST** `/v1/level-test/evaluate`
   - **Description**: Evaluates a submitted level test. It can handle both text-based and image-based answers.
   - **Request Body**:
     ```json
@@ -57,7 +57,7 @@ The API is versioned and all endpoints are available under the `/api/v1` prefix.
 
 ### Planner
 
-- **POST** `/api/v1/planner/generate`
+- **POST** `/v1/planner/generate`
   - **Description**: Generates a new personalized study planner for a student.
   - **Request Body**:
     ```json
