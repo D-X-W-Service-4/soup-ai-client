@@ -69,7 +69,9 @@ The API is versioned and all endpoints are available under the `/v1` prefix.
   - **Response**:
     ```json
     {
-      "planner": { ... }
+      "meta": { ... },
+      "content": [ ... ],
+      "content_total_min": 60
     }
     ```
 
