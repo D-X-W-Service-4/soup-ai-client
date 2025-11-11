@@ -127,9 +127,9 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         {
             "question_num": idx + 1,
             "essay_type_score": r._mapping["essay_type_score"],
-            "difficulty_level": r._mapping["difficulty"], 
+            "difficulty": r._mapping["difficulty"], 
             "is_correct": bool(r._mapping["is_correct"]),
-            "timeout": bool(r._mapping["is_timeout"]), 
+            "is_timeout": bool(r._mapping["is_timeout"]), 
         }
         for idx, r in enumerate(rows)
     ]
@@ -194,7 +194,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         accuracy_by_difficulty[difficulty_map.get(k_int, str(k))] = v
 
     for row in quiz_items:
-        row["difficulty_level"] = difficulty_map[int(row['difficulty_level'])]
+        row["difficulty"] = difficulty_map[int(row['difficulty'])]
     timeout_rate = sum(1 for q in quiz_items if q["is_timeout"]) / len(quiz_items)
     if prev_rows:
         prev_timeout_rate = sum(1 for r in prev_rows if r._mapping["is_timeout"]) / len(prev_rows)
