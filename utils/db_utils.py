@@ -1,6 +1,7 @@
 import os
-from typing import Dict, List, Any, Union
+from typing import Dict, Any
 from fastapi import HTTPException
+from sqlalchemy import text
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 from collections import defaultdict
@@ -128,7 +129,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
             "essay_type_score": r._mapping["essay_type_score"],
             "difficulty_level": r._mapping["difficulty"], 
             "is_correct": bool(r._mapping["is_correct"]),
-            "timeout": bool(r._mapping["timeout"]), 
+            "timeout": bool(r._mapping["is_timeout"]), 
         }
         for idx, r in enumerate(rows)
     ]
@@ -194,9 +195,9 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
 
     for row in quiz_items:
         row["difficulty_level"] = difficulty_map(int(row['difficulty_level']))
-    timeout_rate = sum(1 for q in quiz_items if q["timeout"]) / len(quiz_items)
+    timeout_rate = sum(1 for q in quiz_items if q["is_timeout"]) / len(quiz_items)
     if prev_rows:
-        prev_timeout_rate = sum(1 for r in prev_rows if r._mapping["timeout"]) / len(prev_rows)
+        prev_timeout_rate = sum(1 for r in prev_rows if r._mapping["is_timeout"]) / len(prev_rows)
         if timeout_rate < prev_timeout_rate:
             time_efficiency = "상승"
         elif timeout_rate > prev_timeout_rate:
@@ -271,8 +272,6 @@ def get_recent_planner(student_id: int) -> Dict[str, Any]:
         "content_total_min": total_time,
     }
 
-from sqlalchemy import text
-import random
 
 def get_question_by_difficulty_unit(difficulty: int, subject_unit: str):
     with engine.connect() as conn:
