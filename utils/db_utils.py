@@ -264,7 +264,7 @@ def get_recent_planner(student_id: int) -> Dict[str, Any]:
     return {
         "planner_id": planner_id,
         "meta": {
-            "date": str(planner_date.date()),
+            "date": str(planner_date),
             "day_of_week": _get_korean_day(planner_date.weekday()),
             "planned_time_min": total_time,
         },
