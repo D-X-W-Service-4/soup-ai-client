@@ -109,7 +109,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
                 lti.is_correct,
                 lti.is_timeout,
                 lti.essay_type_score,
-                q.difficulty_level,
+                q.difficulty,
                 q.subject_unit_id,  ## 이것도 해당 question_id에 있음
                 q.question_type ## 이것도
             FROM level_test_questions lti
@@ -126,7 +126,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         {
             "question_num": idx + 1,
             "essay_type_score": r._mapping["essay_type_score"],
-            "difficulty_level": r._mapping["difficulty_level"], 
+            "difficulty_level": r._mapping["difficulty"], 
             "is_correct": bool(r._mapping["is_correct"]),
             "timeout": bool(r._mapping["timeout"]), 
         }
@@ -180,7 +180,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
     )
     accuracy_by_difficulty_raw = _compute_accuracy_by(
         [{**r._mapping, "is_correct": bool(r._mapping["is_correct"])} for r in rows],
-        "difficulty_level"
+        "difficulty"
     )
     difficulty_map = {1: "상", 2: "중", 3: "하"}
     accuracy_by_difficulty = {}
