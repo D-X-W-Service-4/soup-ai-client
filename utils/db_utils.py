@@ -107,7 +107,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         item_query = text("""
             SELECT 
                 lti.is_correct,
-                lti.timeout,
+                lti.is_timeout,
                 lti.essay_type_score,
                 q.difficulty_level,
                 q.subject_unit_id,  ## 이것도 해당 question_id에 있음
