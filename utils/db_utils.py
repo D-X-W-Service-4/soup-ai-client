@@ -30,8 +30,8 @@ def get_user_info(student_id: int) -> Dict[str, Any]:
     }
     grade_map = {"M1":"중학교 1학년", "M2": "중학교 3학년", "M3": "중학교 3학년"}
     result = dict(res._mapping)
-    result["grade"] = grade_map(result["grade"])
-    result["soup"] = soup_score_map(result["soup"])
+    result["grade"] = grade_map[result["grade"]]
+    result["soup"] = soup_score_map[result["soup"]]
     query = text("""
         SELECT name
         FROM subject_units
