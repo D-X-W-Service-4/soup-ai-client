@@ -64,11 +64,11 @@ async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
     unit_list = list(unit_list.values())
 
     soup_score_map = {
-        "CORN": "1",
-        "MUSHROOM": "2",
-        "PUMPKIN": "3",
-        "SWEET_POTATO": "4",
-        "TOMATO": "5"
+        "CORN": "2",
+        "MUSHROOM": "3",
+        "PUMPKIN": "4",
+        "SWEET_POTATO": "5",
+        "TOMATO": "1"
     }
     workbook_score_map = {
         "체크체크": 1,
