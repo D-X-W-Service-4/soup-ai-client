@@ -403,14 +403,14 @@ evaluate_essay_question_prompt = """
 """.strip()
 
 
+# [문제]
+# {question_text}
 
 simple_eval_prompt='''
 당신은 수학 단답형 문제 채점기입니다.
-주어진 질문과 사용자의 답변, 정답을 비교하여, 답이 맞으면 True, 틀리면 False만 반환하세요.
+주어진 사용자의 답변, 정답을 비교하여, 답이 맞으면 True, 틀리면 False만 반환하세요.
 다른 설명, 문장, 추가 텍스트는 절대 출력하지 마세요.
 
-[문제]
-{question_text}
 
 [학생 답안]
 {user_answer}

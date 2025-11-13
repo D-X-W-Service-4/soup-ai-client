@@ -49,7 +49,7 @@ async def eval_simple_level_test(question_text, user_answer, answer):
         "⑤":"5",
     }
     prompt = simple_eval_prompt.format(
-        question_text=question_text,
+        # question_text=question_text,
         user_answer=user_answer,
         answer=answer_map.get(answer.strip(), answer), 
     )
