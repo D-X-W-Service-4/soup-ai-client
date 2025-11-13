@@ -6,7 +6,7 @@ def node_data_check(state: PlannerState) -> PlannerState:
     recent_planner = state.get("recent_planner") or []
 
     has_quiz = len(recent_quiz_info) > 0
-    has_planner = not (len(recent_planner) == 1 and recent_planner[0] == "없음")
+    has_planner = not (len(recent_planner) == 1 and recent_planner.get("message", "최근 플래너 없음") == "최근 플래너 없음")
 
     return {
         **state,

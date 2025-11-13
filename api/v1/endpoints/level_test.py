@@ -9,6 +9,7 @@ router = APIRouter()
 @router.post("/generate", status_code=200)
 async def get_level_test(request: GenerateLevelTestRequest):
     '''create new level test'''
+    print("generate level test input payload: ", request)
     result = await generate_level_test(request.soup_level, request.workbooks, request.unit_list)
     
     return {"level_test": result}
@@ -18,6 +19,7 @@ async def get_level_test(request: GenerateLevelTestRequest):
 @router.post("/evaluate", status_code=200) #
 async def evaluator(request: EvaluateLevelTestRequest):
     ''' evaluate 서술형 문제 단위만 slm 태우기'''
+    print("evaluate level test input payload: ", request)
     evaluate_results = []
     num_questions=len(request.level_test_result)
     for row in request.level_test_result:

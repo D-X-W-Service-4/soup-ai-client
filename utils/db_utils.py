@@ -105,7 +105,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
             return {}
 
         level_test_id = level_test_row[0]._mapping["level_test_id"]
-        prev_level_test_id = level_test_row[1]._mapping["question_set_id"] if len(level_test_row) > 1 else None
+        prev_level_test_id = level_test_row[1]._mapping["level_test_id"] if len(level_test_row) > 1 else None
         item_query = text("""
             SELECT 
                 lti.is_correct,
