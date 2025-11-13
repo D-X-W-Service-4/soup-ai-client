@@ -102,6 +102,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
 
         if not level_test_row:
             # 해당 유저의 레벨테스트 기록 없음
+            print(" 해당 유저의 레벨테스트 기록 없음")
             return {}
 
         level_test_id = level_test_row[0]._mapping["level_test_id"]
