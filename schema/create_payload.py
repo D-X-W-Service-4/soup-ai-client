@@ -5,6 +5,7 @@ def create_planner_input_payload(student_id: str, date: str):
     '''create planner about per day.'''
     user_info, related_units = get_user_info(student_id) # grade, study_hours, soup
     quiz_info = get_recent_quiz_info(student_id) # quiz_id, quizes, total_score
+    print("quiz_info: ", quiz_info)
     planner = get_recent_planner(student_id)
 
     return {
