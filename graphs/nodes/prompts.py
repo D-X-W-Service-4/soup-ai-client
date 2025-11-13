@@ -391,13 +391,13 @@ evaluate_essay_question_prompt = """
 
 [일관성 규칙 — 반드시 준수]
 - accuracy는 step5 결과에 정합적으로 설정:
-  - '정답 일치: 일치'면 accuracy = {max_score}
+  - '정답 일치: 일치'면 accuracy = 100
   - '일부 일치' 또는 '불일치'면 accuracy = 0
 - completeness는 step234의 REQVAL에 정합적으로:
-  - '요구한 값 작성 여부: 일부 누락/작성 안 함' → completeness = 0
+  - '요구한 값 작성 여부: 일부 누락/작성 안 함'일 경우 completeness = 0
 - relevance는 step234의 FIT에 정합적으로:
-  - '판단: 문제 의도와 다름' → relevance = 0
-- validity(계산/논리)는 step1(계산 오류)와 step234(LOGIC)에 정합적으로:
+  - '판단: 문제 의도와 다를 경우엔 relevance = 0
+- validity(계산/논리)는:
   - step1에 명백한 계산/대입 오류 → 최종 score ≤ 2
   - step234에서 논리 비약이 있으면 → 최종 score ≤ 3
 - presentation은 간결·명확성 기준으로 설정.
@@ -413,11 +413,11 @@ evaluate_essay_question_prompt = """
   "score": 0, (최종 score)
   "max_score": {max_score},
   "criteria": {{
-    "accuracy": 0,
-    "completeness": 0,
-    "relevance": 0,
-    "validity": 0,
-    "presentation": 0
+    "accuracy": 점수,
+    "completeness": 점수,
+    "relevance": 점수,
+    "validity": 점수,
+    "presentation": 점수
   }},
   "feedback": ""
 }}
