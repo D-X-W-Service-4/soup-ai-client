@@ -420,7 +420,7 @@ evaluate_essay_question_prompt = """
     "validity": 산출된 validity 점수 (0-100),
     "presentation": 산출된 presentation 점수 (0-100)
   }},
-  "feedback": "학생 피드백 한 문장"
+  "feedback": "피드백 한 문장"
 }}
 """.strip()
 

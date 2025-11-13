@@ -40,30 +40,41 @@ async def ask_exaone(prompt: str) -> str:
     )
     return resp.choices[0].message.content.strip()
 
-
-def ensure_json(s: str, default: Dict[str, Any] = None) -> Dict[str, Any]:
-    """LLM 결과가 JSON 문자열이어야 하는 노드에서 안전하게 파싱."""
+def ensure_json(s: str, default: dict = None) -> dict:
+    """
+    LLM 출력에서 JSON 부분만 스마트하게 추출하여 파싱합니다.
+    마크다운(```json), 앞뒤 잡담, 공백 등을 자동으로 무시합니다.
+    """
     if default is None:
         default = {}
 
-    if not s or not s.strip():
+    if not s:
         print("Warning: LLM 출력이 비어있음")
         return default
 
-    s = s.strip()
-    # 코드블록 제거 처리
-    if s.startswith("```"):
-        s = s.strip("`")
-        if s.lower().startswith("json"):
-            s = s[4:].strip()
+    # 1. 가장 먼저 등장하는 '{' 와 가장 마지막에 등장하는 '}' 위치 탐색
+    start_idx = s.find('{')
+    end_idx = s.rfind('}')
 
+    # 브라켓이 없거나 순서가 뒤집힌 경우 (JSON 아님)
+    if start_idx == -1 or end_idx == -1 or start_idx > end_idx:
+        print(f"Warning: 유효한 JSON 브라켓을 찾을 수 없음. 원본 앞부분: {s[:50]}...")
+        return default
+
+    # 2. 해당 구간만 정확히 잘라냄 (Sub-string)
+    json_str = s[start_idx : end_idx + 1]
+
+    # 3. 파싱 시도
     try:
-        return json.loads(s)
-    except json.JSONDecodeError:
-        print("Warning: LLM 출력 JSON 변환 실패, 원본 출력:", s)
+        return json.loads(json_str)
+    except json.JSONDecodeError as e:
+        # 여전히 에러가 난다면, JSON 내부 문법 오류일 가능성이 높음 (예: 따옴표 실수 등)
+        print(f"Warning: JSON 파싱 실패 (DecodeError).")
+        print(f"- 에러 메시지: {e}")
+        print(f"- 추출된 문자열: {json_str}")
         return default
     
-
+    
 def safe(val, default="없음"):
     return default if val is None else val
 

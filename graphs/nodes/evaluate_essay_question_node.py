@@ -13,7 +13,7 @@ async def node_evaluate_essay_question(state: EvaluateLevelTestState) -> Evaluat
     step234_result=safe(state.get("step234_result"))
     answer_check_result=safe(state.get("answer_check_result"))
     max_score=safe(state.get("max_score"))
-    
+    print('max_score: ', max_score)
     prompt = evaluate_essay_question_prompt.format(
         question_text=question_text,
         student_ocr=student_ocr,
