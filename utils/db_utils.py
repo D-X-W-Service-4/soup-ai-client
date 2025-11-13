@@ -250,7 +250,7 @@ def get_recent_planner(student_id: int) -> Dict[str, Any]:
 
         # 2. 해당 planner_id의 planner_items 전부 조회
         item_query = text("""
-            SELECT content, duration
+            SELECT content, duration, checked
             FROM planner_items
             WHERE planner_id = :pid
         """)
@@ -258,7 +258,7 @@ def get_recent_planner(student_id: int) -> Dict[str, Any]:
 
     # 아이템이 없을 수도 있음
     contents = [
-        {"text": r._mapping["content"], "time": r._mapping["duration"] or 0}
+        {"text": r._mapping["content"], "time": r._mapping["duration"] or 0, "checked": r._mapping["checked"] or 0}
         for r in item_rows
     ]
 
