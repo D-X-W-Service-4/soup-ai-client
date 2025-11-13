@@ -35,7 +35,7 @@ async def node_evaluate_essay_question(state: EvaluateLevelTestState) -> Evaluat
     result = {
         "essay_type_score": score,
         "user_answer": student_ocr,
-        "is_correct": bool(int(accuracy)),  # 0이면 False, 나머지 True
+        "is_correct": int(accuracy) == max_score, 
         "essay_type_score_text": feedback
     }
 
