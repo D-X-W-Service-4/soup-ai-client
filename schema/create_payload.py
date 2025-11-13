@@ -13,7 +13,7 @@ def create_planner_input_payload(student_id: str, date: str):
         "initial_level": user_info["soup"],
         "recent_quiz_info": quiz_info,
         "recent_planner": planner,
-        "recent_score":quiz_info("total_score", 0),
+        "recent_score":quiz_info.get("total_score", 0),
         "current_unit":user_info["current_unit"],
         "related_units": related_units
     }
