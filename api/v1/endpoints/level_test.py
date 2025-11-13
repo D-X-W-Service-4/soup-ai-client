@@ -36,19 +36,26 @@ async def evaluator(request: EvaluateLevelTestRequest):
             graph = evaluate_level_test_graph()
             response = await graph.ainvoke(input=graph_input)
             evaluate_result = response.get("final_eval_result")
-            user_answer_text = await eval_simple_level_test(question_text=row.get("text"),
-                                                    user_answer=row.get("user_answer_text"),
-                                                    answer=row.get("answer_text"))
-            user_answer_text = user_answer_text.get("eval_result").get("is_correct", False)
-            evaluate_result["is_correct"] = user_answer_text
+    
             print("essay evaluate_result: ", evaluate_result)
             evaluate_results.append(evaluate_result)
-        
-        else:
-            print(f"서술형 XXXXXXXXXX, answer: {row.get('answer')} / user answer: {row.get('user_answer_text')}")
+
+
+        elif row.get("question_format") == "선택형":
+            print(f"서술형 X, answer: {row.get('answer')} / user answer: {row.get('user_answer_text')}")
             response = await eval_simple_level_test(question_text=row.get("text"),
                                                     user_answer=row.get("user_answer_text"),
                                                     answer=row.get("answer"))
+            
+            evaluate_result = response.get("eval_result")
+            print("evaluate_result의 정답 채점 result: ", evaluate_result["is_correct"])
+
+            evaluate_results.append(evaluate_result)
+        elif row.get("question_format") == "단답형":
+            print(f"서술형 O / 서술형 대비모드 X, answer: {row.get('answer_text')} / user answer: {row.get('user_answer_text')}")
+            response = await eval_simple_level_test(question_text=row.get("text"),
+                                                    user_answer=row.get("user_answer_text"),
+                                                    answer=row.get("answer_text"))
             
             evaluate_result = response.get("eval_result")
             print("evaluate_result의 정답 채점 result: ", evaluate_result["is_correct"])
