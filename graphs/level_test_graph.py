@@ -1,7 +1,7 @@
 import re
 from langgraph.graph import START, END, StateGraph
 from graphs.states.level_test_state import EvaluateLevelTestState
-from graphs.nodes.prompts import generate_level_test_prompt, simple_eval_prompt
+from graphs.nodes.prompts import generate_level_test_prompt, simple_eval_prompt, short_answer_eval_prompt
 from utils import ask_llm, normalize_text, ensure_json, get_question_by_difficulty_unit
 from graphs.nodes import (
     node_image_ocr,
@@ -39,8 +39,28 @@ def evaluate_level_test_graph():
     return graph.compile()
 
 
+async def eval_short_answer_level_test(user_answer, answer_text): 
+    
+    prompt = short_answer_eval_prompt.format(
+        user_answer=user_answer,
+        answer_text=answer_text, 
+    )
+    print("prompt: ", prompt)
+    out = await ask_llm(prompt)
+    print(out)
+    out_clean = re.sub(r"[^A-Za-z]", "", out)
+    out_clean = out_clean.lower()
+    print("out_clean: " ,out_clean)
+    return {
+        "eval_result": {
+            "is_correct": "true" in out_clean,
+            "essay_type_score": None,
+            "essay_type_score_text": None,
+            "user_answer": user_answer
+        }
+    }
 
-async def eval_simple_level_test(question_text, user_answer, answer): 
+async def eval_simple_level_test(user_answer, answer): 
     answer_map = {
         "①":"1",
         "②":"2",

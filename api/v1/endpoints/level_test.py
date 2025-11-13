@@ -1,6 +1,6 @@
 import asyncio
 from fastapi import APIRouter
-from graphs import evaluate_level_test_graph, eval_simple_level_test, generate_level_test
+from graphs import evaluate_level_test_graph, eval_simple_level_test, eval_short_answer_level_test, generate_level_test
 from schema import GenerateLevelTestRequest, EvaluateLevelTestRequest, create_eval_quiz_input_payload
 router = APIRouter()
 from tqdm import tqdm
@@ -44,9 +44,7 @@ async def evaluator(request: EvaluateLevelTestRequest):
 
         elif row.get("question_format") == "선택형":
             print(f"→ 서술형 X, answer ||| {row.get('answer')} / user answer: {row.get('user_answer_text')}")
-            response = await eval_simple_level_test(question_text=row.get("text"),
-                                                    user_answer=row.get("user_answer_text"),
-                                                    answer=row.get("answer"))
+            response = await eval_simple_level_test(user_answer=row.get("user_answer_text"), answer=row.get("answer"))
             
             evaluate_result = response.get("eval_result")
             print("서술형 채점 result: ", evaluate_result["is_correct"])
@@ -56,9 +54,7 @@ async def evaluator(request: EvaluateLevelTestRequest):
         
         elif row.get("question_format") == "단답형":
             print(f"→ 서술형 O / 서술형 대비모드 X ||| answer: {row.get('answer_text')} / user answer: {row.get('user_answer_text')}")
-            response = await eval_simple_level_test(question_text=row.get("text"),
-                                                    user_answer=row.get("user_answer_text"),
-                                                    answer=row.get("answer_text"))
+            response = await eval_short_answer_level_test(user_answer=row.get("user_answer_text"),answer_text=row.get("answer_text"))
             
             evaluate_result = response.get("eval_result")
             print("선택형 채점 result: ", evaluate_result["is_correct"])
