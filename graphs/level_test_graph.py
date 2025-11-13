@@ -68,7 +68,8 @@ async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
         "MUSHROOM": "3",
         "PUMPKIN": "4",
         "SWEET_POTATO": "5",
-        "TOMATO": "1"
+        "TOMATO": "1",
+        "NONE": "정보 없음"
     }
     workbook_score_map = {
         "체크체크": 1,
