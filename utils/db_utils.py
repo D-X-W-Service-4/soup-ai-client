@@ -23,16 +23,17 @@ def get_user_info(student_id: int) -> Dict[str, Any]:
     if not res:
         raise HTTPException(status_code=404, detail=f"User {student_id} not found.")
     soup_score_map = {
-        "CORN": "1",
-        "MUSHROOM": "2",
-        "PUMPKIN": "3",
-        "SWEET_POTATO": "4",
-        "TOMATO": "5"
+        "CORN": "2",
+        "MUSHROOM": "3",
+        "PUMPKIN": "4",
+        "SWEET_POTATO": "5",
+        "TOMATO": "1",
+        "NONE": "정보 없음"
     }
     grade_map = {"M1":"중학교 1학년", "M2": "중학교 3학년", "M3": "중학교 3학년"}
     result = dict(res._mapping)
-    result["grade"] = grade_map[result["grade"]]
-    result["soup"] = soup_score_map[result["soup"]]
+    result["grade"] = grade_map.get(result["grade"], "정보 없음")
+    result["soup"] = soup_score_map.get(result["soup"], "정보 없음")
     query = text("""
         SELECT name
         FROM subject_units
