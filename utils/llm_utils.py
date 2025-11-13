@@ -39,11 +39,12 @@ async def ask_exaone(prompt: str) -> str:
         max_tokens=220
     )
     return resp.choices[0].message.content.strip()
+import json
 
 def ensure_json(s: str, default: dict = None) -> dict:
     """
     LLM 출력에서 JSON 부분만 스마트하게 추출하여 파싱합니다.
-    마크다운(```json), 앞뒤 잡담, 공백 등을 자동으로 무시합니다.
+    마크다운, 앞뒤 잡담, 그리고 '보이지 않는 특수 공백'을 처리합니다.
     """
     if default is None:
         default = {}
@@ -52,29 +53,32 @@ def ensure_json(s: str, default: dict = None) -> dict:
         print("Warning: LLM 출력이 비어있음")
         return default
 
-    # 1. 가장 먼저 등장하는 '{' 와 가장 마지막에 등장하는 '}' 위치 탐색
+    # 1. JSON 구간({ ... }) 추출
     start_idx = s.find('{')
     end_idx = s.rfind('}')
 
-    # 브라켓이 없거나 순서가 뒤집힌 경우 (JSON 아님)
     if start_idx == -1 or end_idx == -1 or start_idx > end_idx:
-        print(f"Warning: 유효한 JSON 브라켓을 찾을 수 없음. 원본 앞부분: {s[:50]}...")
+        print(f"Warning: 유효한 JSON 브라켓을 찾을 수 없음.")
         return default
 
-    # 2. 해당 구간만 정확히 잘라냄 (Sub-string)
     json_str = s[start_idx : end_idx + 1]
+
+    # 2. [중요] 특수 공백 문자 제거 (이 부분이 핵심 해결책입니다)
+    # \xa0 : Non-breaking space (웹/LLM 출력에서 흔함)
+    # \u3000 : Ideographic space (전각 공백, 한글/일어 텍스트에서 가끔 등장)
+    json_str = json_str.replace('\xa0', ' ').replace('\u3000', ' ')
 
     # 3. 파싱 시도
     try:
         return json.loads(json_str)
     except json.JSONDecodeError as e:
-        # 여전히 에러가 난다면, JSON 내부 문법 오류일 가능성이 높음 (예: 따옴표 실수 등)
         print(f"Warning: JSON 파싱 실패 (DecodeError).")
         print(f"- 에러 메시지: {e}")
-        print(f"- 추출된 문자열: {json_str}")
+        # 디버깅을 위해 repr()로 출력해보면 숨은 문자가 보입니다.
+        print(f"- 문제의 문자열(repr): {repr(json_str)}") 
         return default
     
-    
+
 def safe(val, default="없음"):
     return default if val is None else val
 
