@@ -325,7 +325,7 @@ step234_prompt="""
 
 answer_check_prompt= """
 너는 '정답 비교 전용' 모듈이다. 새로운 계산·추론 금지.
-오직 [학생 풀이]에 실제로 적힌 최종 결과(값/좌표/식/부등식/문장) 목록과 [모범답안] 목록을 비교하라.
+오직 [학생 풀이]의 답안과 [모범답안]을 비교하라.
 
 [문제]
 {question_text}
@@ -360,7 +360,7 @@ answer_check_prompt= """
 
 evaluate_essay_question_prompt = """
 너는 수학 서술형 자동채점기의 '최종 합산기'이다.
-오직 아래 제공된 텍스트(step1, step234, step5)와 [문제/학생/정답/루브릭]만 근거로 판단하며, 새로운 계산/추정은 금지한다.
+오직 아래 제공된 텍스트(step1, step234, step5)와 [문제/학생/정답/학습목표]만 근거로 판단하며, 새로운 계산/추정은 금지한다.
 
 [문제]
 {question_text}
@@ -374,6 +374,8 @@ evaluate_essay_question_prompt = """
 [학습 목표]
 {question_topic}
 
+---
+
 [step1: 계산 점검 결과]
 {student_check_result}
 
@@ -385,19 +387,15 @@ evaluate_essay_question_prompt = """
 
 
 [일관성 규칙 — 반드시 준수]
-- accuracy는 step5 결과에 정합적으로 설정:
-  - '정답 일치: 일치'면 accuracy = 100
-  - '불일치'면 accuracy = 0
-- completeness는 step234의 REQVAL에 정합적으로:
-  - '요구한 값 작성 여부: 일부 누락/작성 안 함'일 경우 completeness = 0
-- relevance는 step234의 FIT에 정합적으로:
-  - '판단: 문제 의도와 다를 경우엔 relevance = 0
-- validity(계산/논리)는:
-  - step1에 명백한 계산/대입 오류 → 최종 score ≤ 2
-  - step234에서 논리 비약이 있으면 → 최종 score ≤ 3
-- presentation은 간결·명확성 기준으로 설정.
-- 최종 score는 위 caps 적용 후 {max_score} 범위에서 합리적으로 배정.
-- feedback은 종합적인 학생 답변 피드백 한 줄.
+- 정답 비교 결과가 '일치'면 accuracy = 100이고, '불일치'면 accuracy = 0 이다.
+- 논리·적합성·작성 여부 결과의 REQVAL이 '일부 누락/작성 안 함'일 경우 completenessㅇ = 0이다.
+- 논리·적합성·작성 여부 결과의 FIT을 참고하여, 문제 의도와 다를 경우엔 relevance 점수를 낮게 주어라
+- 계산 점검 결과에 '명백한 계산/대입 오류'가 있을시, validity 점수를 낮게 주어라.
+- presentation은 간결·명확성 기준으로 설정한다.
+
+- 위의 점수들을 모두 생성한 후, 이를 대표하는 하나의 점수인 '최종 score'를 생성해야 한다.
+- '최종 score'의 만점은 {max_score}점이다.
+- feedback은 종합적인 학생 답변 피드백 한 줄이다.
 
 [출력 규칙 - 매우 중요]
 - 반드시 json 형식만 출력한다. 다른 문장 금지.
@@ -405,7 +403,7 @@ evaluate_essay_question_prompt = """
 
 출력 예시(json 스키마):
 {{
-  "score": 최종 취합 점수
+  "score": 최종 score
   "max_score": {max_score},
   "criteria": {{
     "accuracy": 점수,
