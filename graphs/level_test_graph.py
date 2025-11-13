@@ -41,10 +41,17 @@ def evaluate_level_test_graph():
 
 
 async def eval_simple_level_test(question_text, user_answer, answer): 
+    answer_map = {
+        "①":"1",
+        "②":"2",
+        "③":"3",
+        "④":"4",
+        "⑤":"5",
+    }
     prompt = simple_eval_prompt.format(
         question_text=question_text,
         user_answer=user_answer,
-        answer=answer, 
+        answer=answer_map.get(answer.strip(), answer), 
     )
     out = await ask_llm(prompt)
     out_clean = re.sub(r"[^A-Za-z]", "", out)
