@@ -40,11 +40,13 @@ async def evaluator(request: EvaluateLevelTestRequest):
             evaluate_results.append(evaluate_result)
         
         else:
+            print(f"서술형 XXXXXXXXXX, answer: {row.get('answer')} / user answer: {row.get('user_answer_text')}")
             response = await eval_simple_level_test(question_text=row.get("text"),
                                                     user_answer=row.get("user_answer_text"),
                                                     answer=row.get("answer"))
             
             evaluate_result = response.get("eval_result")
+            print("evaluate_result의 정답 채점 result: ", evaluate_result["is_correct"])
             evaluate_results.append(evaluate_result)
 
     return {"evaluate_result": evaluate_results}
