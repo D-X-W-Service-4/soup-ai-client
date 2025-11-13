@@ -108,14 +108,14 @@ async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
     time_map = {"1": 8, "2": 4, "3":2}
     
     for i, row in enumerate(out["level_test"]):
+        questions = get_question_by_difficulty_unit(difficulty=row["difficulty"],
+                                        subject_unit=row["subject_unit"]
+                                        )
         row["question_id"] = questions.get("question_id", "")
         row["question_num"] = i+1
         row["question_text"] = questions.get("text", "")
         row["question_format"] = questions.get("question_format", "")
         row["time"] = time_map[str(row["difficulty"])]
-        questions = get_question_by_difficulty_unit(difficulty=row["difficulty"],
-                                        subject_unit=row["subject_unit"]
-                                        )
         row["topic"] = questions.get("topic", "")
     del out["subject_unit"]
     return out["level_test"]
