@@ -117,7 +117,7 @@ async def generate_level_test(soup_level: str, workbooks: str, unit_list: dict):
         row["question_format"] = questions.get("question_format", "")
         row["time"] = time_map[str(row["difficulty"])]
         row["topic"] = questions.get("topic", "")
-    del out["subject_unit"]
+        del row["subject_unit"]
     return out["level_test"]
 
 '''
