@@ -112,8 +112,8 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
                 lti.is_timeout,
                 lti.essay_type_score,
                 q.difficulty,
-                q.subject_unit_id,  ## 이것도 해당 question_id에 있음
-                q.question_type ## 이것도
+                q.subject_unit_id,  
+                q.question_type 
             FROM level_test_questions lti
             JOIN questions q ON lti.question_id = q.question_id
             WHERE lti.level_test_id = :level_test_id
@@ -153,7 +153,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         [{**r._mapping, "is_correct": bool(r._mapping["is_correct"])} for r in rows],
         "subject_unit_id"
     )
-
+    print("accuracy_by_unit", accuracy_by_unit)
     # subject_unit_id → name 매핑 조회
     unit_name_query = text("""
         SELECT subject_unit_id, name
@@ -162,7 +162,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
     """)
 
     unit_ids = tuple(accuracy_by_unit.keys())
-
+    print("unit_ids: ",unit_ids)
     with engine.connect() as conn:
         unit_name_rows = conn.execute(unit_name_query, {"ids": unit_ids}).fetchall()
 

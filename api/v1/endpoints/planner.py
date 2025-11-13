@@ -11,6 +11,7 @@ router = APIRouter()
 async def evaluator(request: GeneratePlannerRequest):
     ''' generate new planner'''
     print("generate new planner")
+    print("planner input payload: ", request)
     graph_input = create_planner_input_payload(student_id=request.student_id, date=request.date)
     graph = generate_planner_graph()
     # print(graph_input)
