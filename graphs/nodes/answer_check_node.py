@@ -8,13 +8,19 @@ async def node_answer_check(state: EvaluateLevelTestState) -> EvaluateLevelTestS
     question_text=safe(state.get("question_text"))
     student_ocr=safe(state.get("student_ocr"))
     answer_text=safe(state.get("answer_text"))
-    answer=safe(state.get("answeanswerr_text"))
-    
+    answer=safe(state.get("answer"))
+    answer_map = {
+        "①":"1",
+        "②":"2",
+        "③":"3",
+        "④":"4",
+        "⑤":"5",
+    }
     prompt = answer_check_prompt.format(
         question_text=question_text,
         student_ocr=student_ocr,
         answer_text=answer_text,
-        answer=answer
+        answer=answer_map.get(answer.strip(), answer)
     )
     out = await ask_exaone(prompt)
     print("answer_check_result", out)
