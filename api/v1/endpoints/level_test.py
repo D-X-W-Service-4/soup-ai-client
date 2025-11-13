@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from graphs import evaluate_level_test_graph, eval_simple_level_test, generate_level_test
 from schema import GenerateLevelTestRequest, EvaluateLevelTestRequest, create_eval_quiz_input_payload
 router = APIRouter()
-
+from tqdm import tqdm
 
 # http://127.0.0.1:8000/v1/level-test/generate
 @router.post("/generate", status_code=200)
@@ -22,7 +22,7 @@ async def evaluator(request: EvaluateLevelTestRequest):
     print("evaluate level test input payload: ", request)
     evaluate_results = []
     num_questions=len(request.level_test_result)
-    for row in request.level_test_result:
+    for row in tqdm(request.level_test_result, total=num_questions):
         if row.get("user_answer_image"):
             graph_input = create_eval_quiz_input_payload(
                 num_questions=num_questions, 
@@ -36,7 +36,7 @@ async def evaluator(request: EvaluateLevelTestRequest):
             graph = evaluate_level_test_graph()
             response = await graph.ainvoke(input=graph_input)
             evaluate_result = response.get("final_eval_result")
-            
+            print("essay evaluate_result: ", evaluate_result)
             evaluate_results.append(evaluate_result)
         
         else:

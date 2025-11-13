@@ -39,7 +39,7 @@ async def node_evaluate_essay_question(state: EvaluateLevelTestState) -> Evaluat
         "essay_type_score_text": feedback
     }
 
-    print("final_result", result)
+    # print("final_result", result)
     return {**state, "final_eval_result": result}
 
 '''
