@@ -257,7 +257,7 @@ generate_level_test_prompt = """
 }}
 """
 
-# TODO: 현재 exaone에서 사용중인 프롬프트로 변경하기
+
 calculate_check_prompt = """
 너는 수학 서술형 풀이에서 '계산/대입/수치' 부분만 점검하는 보조 모듈이다.
 아래 문제와 학생 풀이를 보고, 계산적으로 이상한 부분만 적어라.
@@ -405,7 +405,7 @@ evaluate_essay_question_prompt = """
 
 출력 예시(json 스키마):
 {{
-  "score": 0, (최종 score)
+  "score": 최종 취합 점수
   "max_score": {max_score},
   "criteria": {{
     "accuracy": 점수,
