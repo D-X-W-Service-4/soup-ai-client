@@ -53,7 +53,9 @@ async def eval_simple_level_test(question_text, user_answer, answer):
         user_answer=user_answer,
         answer=answer_map.get(answer.strip(), answer), 
     )
+    print("prompt: ", prompt)
     out = await ask_llm(prompt)
+    print(out)
     out_clean = re.sub(r"[^A-Za-z]", "", out)
     out_clean = out_clean.lower()
     print("out_clean: " ,out_clean)
