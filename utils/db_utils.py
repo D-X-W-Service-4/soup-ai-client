@@ -148,7 +148,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         score_trend = "하락"
     else:
         score_trend = "유지"
-
+ 
     accuracy_by_unit = _compute_accuracy_by(
         [{**r._mapping, "is_correct": bool(r._mapping["is_correct"])} for r in rows],
         "subject_unit_id"
