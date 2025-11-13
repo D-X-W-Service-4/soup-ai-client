@@ -19,9 +19,8 @@ class GenerateLevelTestRequest(BaseModel):
 
 class EvaluateLevelTestRequest(BaseModel):
     level_test_result: List
-    # grade: str
-    # num_questions: int
     # user_answer_image: str
+    # user_answer_text: str
     # text: str
     # unit_number: str
     # unit_name: str

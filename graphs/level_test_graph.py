@@ -52,7 +52,7 @@ async def eval_simple_level_test(question_text, user_answer, answer):
     print("out_clean: " ,out_clean)
     return {
         "eval_result": {
-            "is_correct": out_clean == "true",
+            "is_correct": "true" in out_clean,
             "essay_type_score": None,
             "essay_type_score_text": None,
             "user_answer": user_answer

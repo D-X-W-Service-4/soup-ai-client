@@ -36,6 +36,11 @@ async def evaluator(request: EvaluateLevelTestRequest):
             graph = evaluate_level_test_graph()
             response = await graph.ainvoke(input=graph_input)
             evaluate_result = response.get("final_eval_result")
+            user_answer_text = await eval_simple_level_test(question_text=row.get("text"),
+                                                    user_answer=row.get("user_answer_text"),
+                                                    answer=row.get("answer_text"))
+            user_answer_text = user_answer_text.get("eval_result").get("is_correct", False)
+            evaluate_result["is_correct"] = user_answer_text
             print("essay evaluate_result: ", evaluate_result)
             evaluate_results.append(evaluate_result)
         
