@@ -136,9 +136,9 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
         for idx, r in enumerate(rows)
     ]
 
-    total_score = sum(1 for q in quiz_items if q["is_correct"]) * 10
+    total_score = sum(1 for q in quiz_items if q["is_correct"]) * len(rows)
     prev_score = (
-        sum(1 for r in prev_rows if r._mapping["is_correct"]) * 10
+        sum(1 for r in prev_rows if r._mapping["is_correct"]) * len(prev_rows)
         if prev_rows else None
     )
     if prev_score is None:
@@ -212,7 +212,7 @@ def get_recent_quiz_info(student_id: int) -> Dict[str, Any]:
     return {
         "quiz_id": str(level_test_id),
         "quizes": quiz_items,
-        "total_score": sum(1 for q in quiz_items if q["is_correct"]) * 10,
+        "total_score": sum(1 for q in quiz_items if q["is_correct"]) * len(quiz_items),
         "previous_quiz_score": prev_score,
         "score_trend": score_trend,  # 상승/하락/유지
         "accuracy_by_unit": accuracy_by_unit,
